@@ -59,7 +59,7 @@ Work through the following as you would if this landed in your inbox tomorrow.
 Write a query returning the average `first_response_minutes` for tickets closed in the last 30 days, grouped by agent team.
 
 SELECT
-  a.team
+  a.team,
   AVG (t.first_response_minutes) AS avg_first_response_minutes
 FROM tickets t
 JOIN agents a ON t.agent_id = a.agent_id
@@ -71,7 +71,7 @@ Write a query returning each agent's reopen rate (reopened tickets ÷ total tick
 
 WITH agent_rates AS (
   SELECT
-    a.agent_id, a.name, a.team
+    a.agent_id, a.name, a.team,
     SUM (CASE WHEN t.reopened_count> 0 THEN 1 ELSE 0 END):: float
         /COUNT (t.ticket_id) AS reopen_rate
   FROM tickets t
@@ -83,7 +83,7 @@ team_avg AS(
   FROM agent_rates
   GROUP BY team
 )
-SELECT ar.name, ar.team, ar.reopen_rate. ta.team_avg_rate
+SELECT ar.name, ar.team, ar.reopen_rate. ta.team_avg_rate,
 FROM agent_rates ar
 JOIN team_avg ta ON ar.team=ta.team
 WHERE ar.reopen_rate > ta.team_avg_rate;
@@ -93,8 +93,8 @@ WHERE ar.reopen_rate > ta.team_avg_rate;
 Write a query returning the average CSAT score per category, per month, for the last 3 months.
 
 SELECT
-  t.category
-  DATE_TRUNC ('month', c.submitted_at) AS month
+  t.category,
+  DATE_TRUNC ('month', c.submitted_at) AS month,
   AVG (c.score) AS avg_csat
 FROM csat_responses c
 JOIN tickets t ON c.ticket_id = t.ticket_id
